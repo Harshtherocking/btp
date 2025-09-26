@@ -1,0 +1,54 @@
+IndicTransForConditionalGeneration(
+  (model): IndicTransModel(
+    (encoder): IndicTransEncoder(
+      (embed_tokens): Embedding(122709, 512, padding_idx=1)
+      (embed_positions): IndicTransSinusoidalPositionalEmbedding()
+      (layers): ModuleList(
+        (0-17): 18 x IndicTransEncoderLayer(
+          (self_attn): IndicTransAttention(
+            (k_proj): Linear(in_features=512, out_features=512, bias=True)
+            (v_proj): Linear(in_features=512, out_features=512, bias=True)
+            (q_proj): Linear(in_features=512, out_features=512, bias=True)
+            (out_proj): Linear(in_features=512, out_features=512, bias=True)
+          )
+          (self_attn_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (activation_fn): GELUActivation()
+          (fc1): Linear(in_features=512, out_features=2048, bias=True)
+          (fc2): Linear(in_features=2048, out_features=512, bias=True)
+          (final_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+      )
+      (layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+      (layernorm_embedding): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+    )
+    (decoder): IndicTransDecoder(
+      (embed_tokens): Embedding(122675, 512, padding_idx=1)
+      (embed_positions): IndicTransSinusoidalPositionalEmbedding()
+      (layers): ModuleList(
+        (0-17): 18 x IndicTransDecoderLayer(
+          (self_attn): IndicTransAttention(
+            (k_proj): Linear(in_features=512, out_features=512, bias=True)
+            (v_proj): Linear(in_features=512, out_features=512, bias=True)
+            (q_proj): Linear(in_features=512, out_features=512, bias=True)
+            (out_proj): Linear(in_features=512, out_features=512, bias=True)
+          )
+          (activation_fn): GELUActivation()
+          (self_attn_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (encoder_attn): IndicTransAttention(
+            (k_proj): Linear(in_features=512, out_features=512, bias=True)
+            (v_proj): Linear(in_features=512, out_features=512, bias=True)
+            (q_proj): Linear(in_features=512, out_features=512, bias=True)
+            (out_proj): Linear(in_features=512, out_features=512, bias=True)
+          )
+          (encoder_attn_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+          (fc1): Linear(in_features=512, out_features=2048, bias=True)
+          (fc2): Linear(in_features=2048, out_features=512, bias=True)
+          (final_layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+        )
+      )
+      (layer_norm): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+      (layernorm_embedding): LayerNorm((512,), eps=1e-05, elementwise_affine=True)
+    )
+  )
+  (lm_head): Linear(in_features=512, out_features=122675, bias=False)
+)
