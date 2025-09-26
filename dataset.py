@@ -21,7 +21,7 @@ class Bhili_Dataset (Dataset) :
         self.tokenizer = tokenizer
 
     def __len__ (self) :
-        return len(self.data)
+        return len(self.df)
 
     def __getitem__ (self, idx) : 
         src_text = str(self.df.iloc[idx][self.src_col])
