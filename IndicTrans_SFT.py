@@ -7,7 +7,6 @@ from torch.utils.tensorboard import SummaryWriter
 
 from tqdm import tqdm
 
-from utils import modify_token
 from dataset import Bhili_Dataset
 
 special_tokens = [
@@ -17,8 +16,10 @@ special_tokens = [
 ]
 
 
-# DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-DEVICE = 'cuda'
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+# DEVICE = 'cuda'
+# DEVICE = 'cpu'
+print(DEVICE)
 
 tokenizer = AutoTokenizer.from_pretrained(
     "indic_indic_dist_320M_mod", 
@@ -31,6 +32,8 @@ model = AutoModelForSeq2SeqLM.from_pretrained(
     use_cache = False,
     attn_implementation="flash_attention_2"
 ).to(DEVICE)
+
+# exit()
 
 # freezing parameters
 for param in model.parameters() :
@@ -54,22 +57,41 @@ ds = Bhili_Dataset(tokenizer)
 # Initialize TensorBoard writer
 writer = SummaryWriter(log_dir='runs/indic_trans_sft')
 
+# Clear CUDA cache before training
+torch.cuda.empty_cache()
+
+print(f"GPU Memory before training: {torch.cuda.memory_allocated()/1024**3:.2f} GB")
+
 for idx in tqdm(range(int(len(ds) * 0.8))) : 
-    model.train()
+    try:
+        model.train()
 
-    # get inputs
-    x,y = ds[idx] 
-    x['labels'] = y['input_ids']
-    x.to(DEVICE)
+        x, y = ds[idx] 
+        x['labels'] = y['input_ids']
+        x.to(DEVICE)
 
-    out = model(**x)
+        optimizer.zero_grad()
 
-    loss = out.loss
-    print(f"Loss at sample {idx} : {loss.item()}")
-    optimizer.zero_grad()
+        out = model(**x)
+        loss = out.loss
+        print(f"{idx} : {loss.item()}")
+        loss.backward()
 
-    loss.backward()
-    optimizer.step()
+        optimizer.step()
+        
+        del out, x, y
+        
+        torch.cuda.empty_cache()
+    
+            
+    except Exception as e:
+        if "out of memory" in str(e) or "CUBLAS_STATUS_ALLOC_FAILED" in str(e):
+            print(f"CUDA OOM at step {idx}. Clearing cache and skipping batch...")
+            torch.cuda.empty_cache()
+            continue
+        else:
+            raise e
+    
     
     # Log to TensorBoard
     writer.add_scalar('Training/Loss', loss.item(), idx)
