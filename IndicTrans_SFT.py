@@ -17,9 +17,12 @@ special_tokens = [
 
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = "cpu"
 # DEVICE = 'cuda'
 # DEVICE = 'cpu'
 print(DEVICE)
+
+
 
 tokenizer = AutoTokenizer.from_pretrained(
     "indic_indic_dist_320M_mod", 
@@ -53,6 +56,7 @@ optimizer = torch.optim.AdamW(
 
 
 ds = Bhili_Dataset(tokenizer)
+breakpoint()
 
 # Initialize TensorBoard writer
 writer = SummaryWriter(log_dir='runs/indic_trans_sft')
